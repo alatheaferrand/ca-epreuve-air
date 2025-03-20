@@ -1,0 +1,98 @@
+{
+  "air00.rb": [
+    { "arguments": ["Bonjour les gars"], "expected": ["Bonjour", "les", "gars"] },
+    { "arguments": [], "expected": "error: one string expected" },
+    { "arguments": ["Il était", "une fois"], "expected": "error: one string expected" },
+    { "arguments": [""], "expected": "error: empty input detected" },
+    { "arguments": ["   "], "expected": "error: empty input detected" }
+  ],
+  "air01.rb": [
+    { "arguments": ["Crevette magique dans la mer des étoiles", "la"], "expected": ["Crevette magique dans ", " mer des étoiles"] },
+    { "arguments": ["Juste un mot"], "expected": "error: two strings expected" },
+    { "arguments": ["Juste", "un", "mot"], "expected": "error: two strings expected" },
+    { "arguments": ["Juste un mot", ""], "expected": "error: empty input detected" }
+  ],
+  "air02.rb": [
+    { "arguments": ["je", "teste", "des", "trucs", " "], "expected": "je teste des trucs" },
+    { "arguments": ["je"], "expected": "error: at least two arguments expected" },
+    { "arguments": [], "expected": "error: at least two arguments expected" },
+    { "arguments": ["je", ""], "expected": "error: empty input detected" }
+  ],
+  "air03.rb": [
+    { "arguments": ["1", "2", "3", "4", "5", "4", "3", "2", "1"], "expected": "5" },
+    { "arguments": ["bonjour", "monsieur", "bonjour"], "expected": "monsieur" },
+    { "arguments": ["intrus"], "expected": "error: at least two arguments expected" },
+    { "arguments": [], "expected": "error: at least two arguments expected" },
+    { "arguments": ["intrus", ""], "expected": "error: empty input detected" }
+  ],
+  "air04.rb": [
+    { "arguments": ["Hello milady,   bien ou quoi ??"], "expected": "Helo milady, bien ou quoi ?" },
+    { "arguments": [], "expected": "error: one string expected" },
+    { "arguments": ["Il était", "une fois"], "expected": "error: one string expected" },
+    { "arguments": [""], "expected": "error: empty input detected" },
+    { "arguments": ["   "], "expected": "error: empty input detected" }
+  ],
+  "air05.rb": [
+    { "arguments": ["1", "2", "3", "4", "5", "+2"], "expected": "3 4 5 6 7" },
+    { "arguments": ["10", "11", "12", "20", "-5"], "expected": "5 6 7 15" },
+    { "arguments": ["1", "2", "test"], "expected": "error: all arguments must be numeric" },
+    { "arguments": [], "expected": "error: at least two arguments expected" },
+    { "arguments": ["1"], "expected": "error: at least two arguments expected" }
+  ],
+  "air06.rb": [
+    { "arguments": ["Michel", "Albert", "Thérèse", "Benoit", "t"], "expected": "Michel" },
+    { "arguments": ["Michel"], "expected": "error: at least two arguments expected" },
+    { "arguments": [], "expected": "error: at least two arguments expected" },
+    { "arguments": ["Michel", " "], "expected": "error: empty input detected" },
+    { "arguments": ["", "Michel"], "expected": "error: empty input detected" }
+  ],
+  "air07.rb": [
+    { "arguments": ["1", "3", "4", "2"], "expected": "1 2 3 4" },
+    { "arguments": ["1"], "expected": "error: at least two arguments expected" },
+    { "arguments": ["1", "test", "3"], "expected": "error: all arguments must be numeric" },
+    { "arguments": [], "expected": "error: at least two arguments expected" }
+  ],
+  "air08.rb": [
+    { "arguments": ["10", "20", "30", "fusion", "15", "25", "35"], "expected": "10 15 20 25 30 35" },
+    { "arguments": [], "expected": "error: at least 3 arguments expected" },
+    { "arguments": ["10", "fusion"], "expected": "error: at least 3 arguments expected" },
+    { "arguments": ["fusion", "10", "20", "30"], "expected": "error: \"fusion\" must not be at the beginning or end" },
+    { "arguments": ["10", "20", "30", "fusion"], "expected": "error: \"fusion\" must not be at the beginning or end" },
+    { "arguments": ["10", "20", "fusion", "15", "test"], "expected": "error: all arguments must be numeric except \"fusion\"" },
+    { "arguments": ["10", "20", "fusion", "30", ""], "expected": "error: empty input detected" }
+  ],
+  "air09.rb": [
+    { "arguments": ["Michel", "Albert", "Thérèse", "Benoit"], "expected": "Albert, Thérèse, Benoit, Michel" },
+    { "arguments": [], "expected": "error: at least 2 arguments expected" },
+    { "arguments": ["Michel"], "expected": "error: at least 2 arguments expected" },
+    { "arguments": ["Michel", " "], "expected": "error: empty input detected" }
+  ],
+  "air10.rb": [
+    { "arguments": ["air10_test.txt"], "expected": ["1", "2", "3", "Soleil"] },
+    { "arguments": [], "expected": "error: 1 file expected" },
+    { "arguments": ["fichier_inexistant.txt"], "expected": "error: file not found" },
+    { "arguments": ["air10_empty.txt"], "expected": "error: file is empty" }
+  ],
+  "air11.rb": [
+    { "arguments": ["O", "5"], "expected": ["    O", "   OOO", "  OOOOO", " OOOOOOO", "OOOOOOOOO"] },
+    { "arguments": [], "expected": "error: 2 arguments expected" },
+    { "arguments": ["O"], "expected": "error: 2 arguments expected" },
+    { "arguments": ["OO", "5"], "expected": "error: 1 character expected" },
+    { "arguments": ["O", "abc"], "expected": "error: 1 integer expected" },
+    { "arguments": ["O", "0"], "expected": "error: height must be greater than zero" },
+    { "arguments": ["O", "-3"], "expected": "error: height must be greater than zero" },
+    { "arguments": ["", "5"], "expected": "error: empty input detected" },
+    { "arguments": ["O", ""], "expected": "error: empty input detected" }
+  ],
+  "air12.rb": [
+    { "arguments": ["6", "5", "4", "3", "2", "1"], "expected": "1 2 3 4 5 6" },
+    { "arguments": [], "expected": "error: at least 2 arguments expected" },
+    { "arguments": ["5"], "expected": "error: at least 2 arguments expected" },
+    { "arguments": ["5", "abc"], "expected": "error: all arguments must be numeric" },
+    { "arguments": ["5", "5", "5"], "expected": "error: all arguments are identical" }
+  ],
+  "air14.rb": [
+    { "arguments": ["incroyable"], "expected": "J’ai terminé l’Épreuve de l’Air et c’était incroyable !" },
+    { "arguments": [], "expected": "J’ai terminé l’Épreuve de l’Air et c’était éprouvant !" }
+  ]
+}
