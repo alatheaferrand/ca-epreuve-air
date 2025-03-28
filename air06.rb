@@ -1,72 +1,83 @@
 # frozen_string_literal: true
 
-# Contrôle de pass sanitaire
-# Programme qui supprime d'un tableau tous les éléments qui ne contiennent pas
-# une autre chaîne de caractères.
-# Utiliser une fonction de ce genre:
-#  ma_fonction(array_de_strings, string) {
-#    mon algorithme
-#    return (nouvel_array_de_strings)
-#  }
-# Afficher error et quitter le programme en cas de problèmes d'arguments.
+# Pass Sanitary Filter — AIR06
+# Filters a list of strings and returns those that contain the given substring (case-insensitive).
+# Example: ruby air06.rb Michel Albert Therese Benoit t → Michel, Albert
 
-# ---------- Utility Functions ----------
-
-def filter_strings(array, token)
-  array_of_elements_to_delete = []
-  token = token.downcase
-
-  array.each do |string|
-    check_string = string.downcase
-    is_token_match = false
-
-    (0..(check_string.length - token.length)).each do |i|
-      if check_string[i, token.length] == token
-        is_token_match = true
-        break
-      end
-    end
-
-    array_of_elements_to_delete << string unless is_token_match
-  end
-
-  array_of_elements_to_delete.join(', ')
-end
-
-# ---------- Error Handling ----------
+# Validation
 
 def validate_arguments(arguments)
-  return 'error: at least two arguments expected' unless at_least_two_argument?(arguments)
-  return 'error: empty input detected' if arguments.any? { |argument| empty_input?(argument) }
+  return 'error: at least three arguments expected' if arguments.length < 3
+  return 'error: empty input detected' if contains_empty_input?(arguments)
+
+  nil
 end
 
-def at_least_two_argument?(arguments)
-  arguments.size >= 2
+# Business logic
+
+# rubocop:disable Metrics/MethodLength
+def filter_strings(strings, substring)
+  filtered = []
+  i = 0
+  while i < strings.length
+    string = strings[i]
+    j = 0
+    found = false
+
+    while j <= string.length - substring.length
+      if string[j, substring.length].downcase == substring.downcase
+        found = true
+        break
+      end
+      j += 1
+    end
+
+    filtered << string if found
+    i += 1
+  end
+  filtered
+end
+# rubocop:enable Metrics/MethodLength
+
+# Helpers
+
+def contains_empty_input?(array)
+  i = 0
+  while i < array.length
+    return true if empty_input?(array[i])
+
+    i += 1
+  end
+  false
 end
 
 def empty_input?(string)
-  string.strip.empty?
+  i = 0
+  while i < string.length
+    return false if string[i] != ' '
+
+    i += 1
+  end
+  true
 end
 
-# ---------- Parsing Arguments ----------
+# Program execution
 
-def retrieve_arguments()
+def main
   arguments = ARGV
+
+  error = validate_arguments(arguments)
+  if error
+    puts error
+    return
+  end
+
+  strings = arguments[0..-2]
+  substring = arguments[-1]
+
+  result = filter_strings(strings, substring)
+
+  puts result.join(', ')
 end
 
-# ---------- Problem Solving ----------
-
-def filtered_strings()
-  arguments = retrieve_arguments()
-  error_message = validate_arguments(arguments)
-  return error_message if error_message
-
-  string = arguments[-1]
-  array = arguments[0..-2]
-
-  filter_strings(array, string)
-end
-
-# ---------- Execution ----------
-
-puts filtered_strings()
+main if __FILE__ == $PROGRAM_NAME
