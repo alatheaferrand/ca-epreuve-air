@@ -1,77 +1,90 @@
 # frozen_string_literal: true
 
-# Split
-# Programme qui découpe une chaine de caractères en tableau (séparateurs : espaces, tabulations, retours à la ligne).
-# Le programme devra utiliser une fonction prototypée comme ceci :
-# ma_fonction(string_à_couper, string_séparateur) {
-#  votre algorithme
-#  return (tableau)
-# }
-# Affiche error et quitte le programme en cas de problèmes d'arguments.
+# Split — AIR00
+# Receives a string and returns an array of strings split by space, tab, or newline.
+# Example usage: ruby air00.rb "This\tis a\ntest"
 
-# ---------- Utility Functions ----------
-
-def my_split(string_to_split, separators)
-  array = []
-  word = +''
-
-  string_to_split.each_char do |char|
-    is_separator = false
-
-    separators.each do |separator|
-      if char == separator
-        is_separator = true
-        break
-      end
-    end
-
-    if is_separator == true
-      array << word unless word.length == 0
-      word = +''
-    else
-      word << char
-    end
-  end
-
-  array << word unless word.length == 0
-
-  array
-end
-
-# ---------- Error Handling ----------
+# Validation
 
 def validate_arguments(arguments)
-  return 'error: one string expected' unless single_argument?(arguments)
-  return 'error: empty input detected' if empty_input?(arguments[0])
+  return 'error: one string expected' unless arguments.length == 1
+  return 'error: empty input detected' if contains_empty_input?(arguments)
+
+  nil
 end
 
-def single_argument?(arguments)
-  arguments.size == 1
+# Business logic
+
+# rubocop:disable Metrics/MethodLength
+def split(string, separators)
+  strings = []
+  current = ''
+  i = 0
+
+  while i < string.length
+    char = string[i]
+
+    if includes?(char, separators)
+      strings << current unless empty_input?(current)
+      current = ''
+    else
+      current += char
+    end
+
+    i += 1
+  end
+
+  strings << current unless empty_input?(current)
+  strings
+end
+# rubocop:enable Metrics/MethodLength
+
+# Helpers
+
+def includes?(char, array)
+  i = 0
+  while i < array.length
+    return true if char == array[i]
+
+    i += 1
+  end
+  false
 end
 
-def empty_input?(argument)
-  argument.strip.empty?
+def contains_empty_input?(array)
+  i = 0
+  while i < array.length
+    return true if empty_input?(array[i])
+
+    i += 1
+  end
+  false
 end
 
-# ---------- Parsing Arguments ----------
+def empty_input?(string)
+  i = 0
+  while i < string.length
+    return false if string[i] != ' '
 
-def retrieve_arguments
+    i += 1
+  end
+  true
+end
+
+# Program execution
+
+def main
   arguments = ARGV
+  error = validate_arguments(arguments)
+  return puts error if error
+
+  string = arguments[0]
+  separators = [' ', "\t", "\n"]
+
+  strings = split(string, separators)
+  return puts 'error: empty input detected' if strings.empty?
+
+  puts strings
 end
 
-# ---------- Problem Solving ----------
-
-def split_string_into_array()
-  arguments = retrieve_arguments()
-  error_message = validate_arguments(arguments)
-  return error_message if error_message
-
-  string_to_split = arguments[0]
-  separators = [' ', '\t', '\n']
-
-  return my_split(string_to_split, separators)
-end
-
-# ---------- Execution ----------
-
-puts split_string_into_array()
+main if __FILE__ == $PROGRAM_NAME
