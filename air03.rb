@@ -1,67 +1,75 @@
 # frozen_string_literal: true
 
-# Chercher l'intrus
-# Programme qui retourne la valeur d'une liste qui n'a pas de paire.
-# Afficher error et quitter le programme en cas de problèmes d'arguments.
+# Intruder — AIR03
+# Prints all unique values (those that have no pair) from the input list.
+# Example: ruby air03.rb a b c a b → c
 
-# ---------- Utility Functions ----------
-
-def find_intruder(arguments)
-  intruders = []
-
-  i = 0
-  while i < arguments.length
-    has_a_pair = false
-    j = 0
-    while j < arguments.length
-      if arguments[i] == arguments[j] && i != j
-        has_a_pair = true
-        break
-      end
-      j += 1
-    end
-
-    intruders << arguments[i] unless has_a_pair
-
-    i +=1
-  end
-
-  return 'no intruder found' if intruders.empty?
-
-  intruders.join(' ')
-end
-  
-# ---------- Error Handling ----------
+# Validation
 
 def validate_arguments(arguments)
-  return 'error: at least two arguments expected' unless at_least_two_argument?(arguments)
-  return 'error: empty input detected' if arguments.any? { |argument| empty_input?(argument) }
+  return 'error: at least two arguments expected' if arguments.length < 2
+  return 'error: empty input detected' if contains_empty_input?(arguments)
+
+  nil
 end
 
-def at_least_two_argument?(arguments)
-  arguments.size >= 2
+# Business logic
+
+# rubocop:disable Metrics/MethodLength
+def find_intruders(strings)
+  intruders = []
+  i = 0
+  while i < strings.length
+    count = 0
+    j = 0
+    while j < strings.length
+      count += 1 if strings[i] == strings[j]
+      j += 1
+    end
+    intruders << strings[i] if count == 1
+    i += 1
+  end
+  intruders
+end
+# rubocop:enable Metrics/MethodLength
+
+# Helpers
+
+def contains_empty_input?(array)
+  i = 0
+  while i < array.length
+    return true if empty_input?(array[i])
+
+    i += 1
+  end
+  false
 end
 
-def empty_input?(argument)
-  argument.strip.empty?
+def empty_input?(string)
+  i = 0
+  while i < string.length
+    return false if string[i] != ' '
+
+    i += 1
+  end
+  true
 end
 
-# ---------- Parsing Arguments ----------
+# Program execution
 
-def retrieve_arguments()
+def main
   arguments = ARGV
+
+  error = validate_arguments(arguments)
+  if error
+    puts error
+    return
+  end
+
+  strings = arguments # conversion explicite (pas de transformation ici)
+
+  result = find_intruders(strings)
+  puts result.join(' ') unless result.empty?
 end
 
-# ---------- Problem Solving ----------
-
-def trace_intruder()
-  arguments = retrieve_arguments()
-  error_message = validate_arguments(arguments)
-  return error_message if error_message
-
-  return find_intruder(arguments)
-end
-
-# ---------- Execution ----------
-
-puts trace_intruder()
+main if __FILE__ == $PROGRAM_NAME
