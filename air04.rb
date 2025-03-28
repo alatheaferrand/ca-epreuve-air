@@ -1,55 +1,51 @@
 # frozen_string_literal: true
 
-# Un seul à la fois
-# Programme qui affiche une chaïne de caractères en évitant les caractères identiques adjacents.
-# Afficher error et quitter le programme en cas de problèmes d'arguments.
+# Unique once — AIR04
+# Prints the input string with adjacent duplicate characters removed.
+# Example: ruby air04.rb "Hello  milady !!" → "Helo milady !"
 
-# ---------- Utility Functions ----------
-
-def remove_adjacent_duplicates(string)
-  new_string = +''
-  i = 0
-  while i < string.length
-    new_string << string[i] unless new_string[-1] == string[i]
-    i += 1
-  end
-
-  new_string
-end
-
-# ---------- Error Handling ----------
+# Validation
 
 def validate_arguments(arguments)
-  return 'error: one string expected' unless single_argument?(arguments)
+  return 'error: one string expected' if arguments.length != 1
   return 'error: empty input detected' if empty_input?(arguments[0])
+
+  nil
 end
 
-def single_argument?(arguments)
-  arguments.size == 1
+# Business logic
+
+def remove_adjacent_duplicates(string)
+  result = +''
+  i = 0
+  while i < string.length
+    result << string[i] unless result[-1] == string[i]
+
+    i += 1
+  end
+  result
 end
+
+# Helpers
 
 def empty_input?(string)
-  string.strip.empty?
+  i = 0
+  while i < string.length
+    return false if string[i] != ' '
+
+    i += 1
+  end
+  true
 end
 
-# ---------- Parsing Arguments ----------
+# Program execution
 
-def retrieve_arguments()
+def main
   arguments = ARGV
-end
-  
-# ---------- Problem Solving ----------
+  error = validate_arguments(arguments)
+  return puts error if error
 
-def removed_adjacent_duplicates()
-  arguments = retrieve_arguments()
-  error_message = validate_arguments(arguments)
-  return error_message if error_message
-
-  string = arguments[0]
-  return remove_adjacent_duplicates(string)
+  puts remove_adjacent_duplicates(arguments[0])
 end
 
-# ---------- Execution ----------
-
-puts removed_adjacent_duplicates()
-
+main if __FILE__ == $PROGRAM_NAME
