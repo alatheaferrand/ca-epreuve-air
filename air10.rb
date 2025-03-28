@@ -1,98 +1,73 @@
 # frozen_string_literal: true
 
-# Afficher le contenu
-# Programme qui affiche le contenu d'un fichier donné en argument.
-# Afficher error et quitter le programme en cas de problèmes d'arguments ou de fichier inaccessible.
+# Read File — AIR10
+# Displays the content of a file provided as argument.
+# Example: ruby air10.rb file.txt
 
-# ---------- Utility Functions ----------
-
-def read_file(file_path)
-  content = ''
-  file = File.new(file_path, 'r')
-
-  while (line = file.gets)
-    content += line
-  end
-
-  file.close
-  
-  content
-end
-
-# ---------- Error Handling ----------
+# Validation
 
 def validate_arguments(arguments)
-  return 'error: 1 file expected' unless single_argument?(arguments)
+  return 'error: 1 file expected' unless arguments.length == 1
 
   file_path = arguments[0]
   return 'error: file not found' unless file_exists?(file_path)
   return 'error: file not accessible' unless file_accessible?(file_path)
   return 'error: file is empty' if file_empty?(file_path)
+
+  nil
 end
 
-def single_argument?(arguments)
-  arguments.size == 1
-end
+# File check helpers (homemade, no native File.*)
 
 def file_exists?(file_path)
-  found = false
-  files = `ls`.split("\n")
+  files = Dir.entries(Dir.pwd)
 
   i = 0
   while i < files.length
-    if files[i] == file_path
-      found = true
-      break
-    end
+    return true if files[i] == file_path
+
     i += 1
   end
 
-  found
+  false
 end
 
 def file_accessible?(file_path)
-  accessible = false
-  files = `ls -l`.split("\n") # Récupère la liste des fichiers avec permissions
-
-  i = 0
-  while i < files.length
-    details = files[i].split # Divise la ligne en mots (permissions, propriétaire, etc.)
-    
-    if details[-1] == file_path
-      permissions = details[0] # Récupère la colonne des permissions (ex: "-rw-r--r--")
-      accessible = permissions[0] != 'd' && permissions[1] != '-'
-      break
-    end
-    i += 1
-  end
-
-  accessible
+  File.open(file_path, 'r') { true }
+rescue Errno::EACCES
+  false
 end
 
 def file_empty?(file_path)
   size = 0
-  File.open(file_path, "r") do |file|
-    file.each_line { |line| size += line.bytesize }
+  File.open(file_path, 'r') do |file|
+    while (line = file.gets)
+      size += line.bytesize
+    end
   end
-  size == 0
+  size.zero?
 end
 
-# ---------- Parsing Arguments ----------
+# Business logic
 
-def retrieve_arguments()
+def read_file(file_path)
+  content = ''
+  File.open(file_path, 'r') do |file|
+    while (line = file.gets)
+      content += line
+    end
+  end
+  content
+end
+
+# Program execution
+
+def main
   arguments = ARGV
+  error = validate_arguments(arguments)
+  return puts error if error
+
+  puts read_file(arguments[0])
 end
 
-# ---------- Problem Solving ----------
-
-def display_file_content()
-  arguments = retrieve_arguments()
-  error_message = validate_arguments(arguments)
-  return error_message if error_message
-
-  return read_file(arguments[0])
-end
-
-# ---------- Execution ----------
-
-puts display_file_content()
+main if __FILE__ == $PROGRAM_NAME
