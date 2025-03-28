@@ -1,11 +1,12 @@
 # frozen_string_literal: true
 
-# ---------- META EXERCICE ----------
+# Test Runner — AIR13
+# Runs predefined test cases for each script in the AIR series.
 
 require 'json'
-require 'yaml'
+require 'shellwords' # ✅ Sécurise les arguments shell
 
-# ---------- CONSTANTS ----------
+# Constants
 
 GREEN = "\e[32m"
 RED = "\e[31m"
@@ -14,16 +15,18 @@ RESET = "\e[0m"
 
 CURRENT_SCRIPT = File.basename(__FILE__)
 PATTERN = ENV.fetch('PATTERN', '*.rb')
-TEST_FILE = ENV.fetch('TEST_FILE', 'air13_tests.json')
+TEST_FILE = 'air13_tests.json'
 
-# ---------- FILE HANDLING ----------
+# Validation
 
-def find_scripts()
-  files = Dir.glob(PATTERN) - [CURRENT_SCRIPT]
-  return files unless files.empty?
+def valid_script_name?(name)
+  /^[a-zA-Z0-9_-]+\.rb$/.match?(name)
+end
 
-  puts "#{RED}Error: No scripts found in the directory#{RESET}"
-  []
+# File handling
+
+def find_scripts
+  Dir.glob(PATTERN).select { |f| f != CURRENT_SCRIPT && valid_script_name?(f) }
 end
 
 def read_file(path)
@@ -37,22 +40,17 @@ def load_tests(file)
   content = read_file(file)
   return {} if content.nil?
 
-  case File.extname(file)
-  when '.json' then JSON.parse(content)
-  when '.yaml', '.yml' then YAML.safe_load(content, permitted_classes: [String, Array, Hash])
-  else
-    puts "#{RED}Error: Unsupported file format (#{file})#{RESET}"
-    return {}
-  end
-rescue JSON::ParserError, Psych::SyntaxError
-  puts "#{RED}Error: Invalid test file format (#{file})#{RESET}"
-  return {}
+  JSON.parse(content)
+rescue JSON::ParserError
+  puts "#{RED}Error: Invalid JSON test file (#{file})#{RESET}"
+  {}
 end
 
-# ---------- SCRIPT EXECUTION ----------
+# Script execution
 
 def run_script(file, arguments)
-  output = `ruby #{file} #{arguments.map { |argument| "\"#{argument}\"" }.join(' ')}`.chomp
+  args = arguments.map { |arg| Shellwords.escape(arg) }.join(' ')
+  output = `ruby #{Shellwords.escape(file)} #{args}`.chomp
   output.include?("\n") ? output.split("\n") : output
 end
 
@@ -62,23 +60,35 @@ def check_output(file, index, total, output, expected)
 
   puts "#{file} (#{index}/#{total}) : #{status}"
   unless success
-    puts "   ↳ Output : #{output.inspect}"
+    puts "   ↳ Output   : #{output.inspect}"
     puts "   ↳ Expected : #{expected.inspect}"
   end
 
   success
 end
 
-# ---------- MAIN EXECUTION ----------
+def test_script(script, cases)
+  success_count = 0
 
-def run_tests()
+  cases.each_with_index do |test, i|
+    output = run_script(script, test['arguments'])
+    success_count += 1 if check_output(script, i + 1, cases.size, output, test['expected'])
+  end
+
+  success_count
+end
+
+# Program execution
+
+# rubocop:disable Metrics/MethodLength
+def run_tests
   tests = load_tests(TEST_FILE)
   return puts "#{RED}Error: No test cases found in '#{TEST_FILE}'#{RESET}" if tests.empty?
 
   total_tests = 0
   total_success = 0
 
-  find_scripts().each do |script|
+  find_scripts.each do |script|
     unless tests.key?(script)
       puts "#{RED}Warning: No tests found for script '#{script}'#{RESET}"
       next
@@ -86,16 +96,11 @@ def run_tests()
 
     cases = tests[script]
     total_tests += cases.size
-
-    cases.each_with_index do |test, i|
-      output = run_script(script, test['arguments'])
-      total_success += 1 if check_output(script, i + 1, cases.size, output, test['expected'])
-    end
+    total_success += test_script(script, cases)
   end
 
   puts "\n#{BLUE}Total success: #{total_success}/#{total_tests}#{RESET}"
 end
+# rubocop:enable Metrics/MethodLength
 
-# ---------- EXECUTION ----------
-
-run_tests()
+run_tests if __FILE__ == $PROGRAM_NAME

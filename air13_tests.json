@@ -14,9 +14,9 @@
   ],
   "air02.rb": [
     { "arguments": ["je", "teste", "des", "trucs", " "], "expected": "je teste des trucs" },
-    { "arguments": ["je"], "expected": "error: at least two arguments expected" },
-    { "arguments": [], "expected": "error: at least two arguments expected" },
-    { "arguments": ["je", ""], "expected": "error: empty input detected" }
+    { "arguments": ["je"], "expected": "error: at least three arguments expected" },
+    { "arguments": [], "expected": "error: at least three arguments expected" },
+    { "arguments": ["je", "", "suis"], "expected": "error: empty input detected" }
   ],
   "air03.rb": [
     { "arguments": ["1", "2", "3", "4", "5", "4", "3", "2", "1"], "expected": "5" },
@@ -34,17 +34,17 @@
   ],
   "air05.rb": [
     { "arguments": ["1", "2", "3", "4", "5", "+2"], "expected": "3 4 5 6 7" },
-    { "arguments": ["10", "11", "12", "20", "-5"], "expected": "5 6 7 15" },
-    { "arguments": ["1", "2", "test"], "expected": "error: all arguments must be numeric" },
+    { "arguments": ["1", "deux", "+3"], "expected": "error: all arguments must be numeric" },
+    { "arguments": ["1", "2", "test"], "expected": "error: invalid operation format" },
     { "arguments": [], "expected": "error: at least two arguments expected" },
     { "arguments": ["1"], "expected": "error: at least two arguments expected" }
   ],
   "air06.rb": [
-    { "arguments": ["Michel", "Albert", "Thérèse", "Benoit", "t"], "expected": "Michel" },
-    { "arguments": ["Michel"], "expected": "error: at least two arguments expected" },
-    { "arguments": [], "expected": "error: at least two arguments expected" },
-    { "arguments": ["Michel", " "], "expected": "error: empty input detected" },
-    { "arguments": ["", "Michel"], "expected": "error: empty input detected" }
+    { "arguments": ["Michel", "Albert", "Thérèse", "Benoit", "c"], "expected": "Michel" },
+    { "arguments": ["Michel"], "expected": "error: at least three arguments expected" },
+    { "arguments": [], "expected": "error: at least three arguments expected" },
+    { "arguments": ["Michel", "Albert", "", "t"], "expected": "error: empty input detected" },
+    { "arguments": ["", "Albert", "Thérèse", "t"], "expected": "error: empty input detected" }
   ],
   "air07.rb": [
     { "arguments": ["1", "3", "4", "2"], "expected": "1 2 3 4" },
@@ -54,12 +54,13 @@
   ],
   "air08.rb": [
     { "arguments": ["10", "20", "30", "fusion", "15", "25", "35"], "expected": "10 15 20 25 30 35" },
-    { "arguments": [], "expected": "error: at least 3 arguments expected" },
-    { "arguments": ["10", "fusion"], "expected": "error: at least 3 arguments expected" },
-    { "arguments": ["fusion", "10", "20", "30"], "expected": "error: \"fusion\" must not be at the beginning or end" },
-    { "arguments": ["10", "20", "30", "fusion"], "expected": "error: \"fusion\" must not be at the beginning or end" },
-    { "arguments": ["10", "20", "fusion", "15", "test"], "expected": "error: all arguments must be numeric except \"fusion\"" },
-    { "arguments": ["10", "20", "fusion", "30", ""], "expected": "error: empty input detected" }
+    { "arguments": [], "expected": "error: at least 5 arguments expected" },
+    { "arguments": ["10", "fusion"], "expected": "error: at least 5 arguments expected" },
+    { "arguments": ["fusion", "10", "20", "30", "40"], "expected": "error: \"fusion\" at start/end" },
+    { "arguments": ["10", "20", "30", "40", "fusion"], "expected": "error: \"fusion\" at start/end" },
+    { "arguments": ["10", "20", "fusion", "15", "test"], "expected": "error: non-numeric value detected" },
+    { "arguments": ["10", "20", "fusion", "30", ""], "expected": "error: empty input detected" },
+    { "arguments": ["30", "10", "fusion", "20", "40"], "expected": "error: arrays must be sorted" }
   ],
   "air09.rb": [
     { "arguments": ["Michel", "Albert", "Thérèse", "Benoit"], "expected": "Albert, Thérèse, Benoit, Michel" },
