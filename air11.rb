@@ -1,92 +1,90 @@
 # frozen_string_literal: true
 
-# Afficher une pyramide
-# Afficher un escalier constitué d'un caractère et d'un nombre d'étages 
-# donné en paramètre.
-# Afficher error et quitter le programme en cas de problèmes d'arguments.
+# Pyramid — AIR11
+# Displays a pyramid of a given height using a single character.
+# Example: ruby air11.rb O 3 → prints 3 levels of pyramid with 'O'
 
-# ---------- Utility Functions ----------
-
-def display_pyramid(char, height)
-    pyramid = []
-  
-    i = 0
-    while i < height
-      line = ''
-      spaces = height - i - 1
-      chars = (2 * i) + 1
-  
-      j = 0
-      while j < spaces
-        line += ' '
-        j += 1
-      end
-  
-      k = 0
-      while k < chars
-        line += char
-        k += 1
-      end
-  
-      pyramid << line
-      i += 1
-    end
-  
-    pyramid.join("\n")
-  end
-
-# ---------- Error Handling ----------  
+# Validation
 
 def validate_arguments(arguments)
-  return 'error: 2 arguments expected' unless two_arguments?(arguments)
-  return 'error: empty input detected' if arguments.any? { |argument| empty_input?(argument) }
+  return 'error: 2 arguments expected' unless arguments.length == 2
+  return 'error: empty input detected' if contains_empty_input?(arguments)
 
   char = arguments[0]
   height = arguments[1]
+  return 'error: 1 character expected' unless char.length == 1
+  return 'error: 1 integer expected' unless numeric_string?(height)
+  # rubocop:disable Style/NumericPredicate
+  return 'error: height must be greater than zero' unless height.to_i > 0
+  # rubocop:enable Style/NumericPredicate
 
-  return 'error: 1 character expected' unless one_char?(char)
-  return 'error: 1 integer expected' unless numeric?(height)
-  return 'error: height must be greater than zero'unless height.to_i > 0
+  nil
 end
 
-def two_arguments?(arguments)
-  arguments.length == 2
+# Business logic
+
+def pyramid(char, height)
+  i = 0
+  while i < height
+    spaces = ' ' * (height - i - 1)
+    symbols = char * (2 * i + 1)
+    puts spaces + symbols
+    i += 1
+  end
 end
+
+# Helpers
 
 def empty_input?(string)
   i = 0
   while i < string.length
-    return false if string[i] != " "
+    return false if string[i] != ' '
+
     i += 1
   end
   true
 end
 
-def one_char?(char)
-  char.length == 1
+def contains_empty_input?(array)
+  i = 0
+  while i < array.length
+    return true if empty_input?(array[i])
+
+    i += 1
+  end
+
+  false
 end
 
-def numeric?(value)
-  !Integer(value, exception: false).nil?
+def numeric_string?(string)
+  return false if string.empty?
+
+  i = 0
+  i += 1 if ['+', '-'].include?(string[0])
+  return false if i >= string.length
+
+  while i < string.length
+    char = string[i]
+    return false if char < '0' || char > '9'
+
+    i += 1
+  end
+
+  true
 end
 
-# ---------- Parsing Arguments ----------
+# Program execution
 
-def retrieve_arguments()
+def main
   arguments = ARGV
+
+  error = validate_arguments(arguments)
+  return puts error if error
+
+  char = arguments[0]
+  height = arguments[1].to_i
+
+  pyramid(char, height)
 end
 
-# ---------- Problem Solving ----------
-
-def trace_pyramid()
-  arguments = retrieve_arguments()
-  error_message = validate_arguments(arguments)
-  return error_message if error_message
-
-  char, height = arguments[0], arguments[1].to_i
-  display_pyramid(char, height)
-end
-
-# ---------- Execution ----------
-
-puts trace_pyramid()
+main if __FILE__ == $PROGRAM_NAME
