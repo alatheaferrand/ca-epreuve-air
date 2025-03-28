@@ -1,0 +1,39 @@
+# === Ruby ===
+*.gem
+*.rbc
+.bundle
+.config
+coverage/
+InstalledFiles
+pkg/
+spec/reports/
+test/tmp/
+test/version_tmp/
+tmp/
+
+# === Editor & OS files ===
+*.swp
+.DS_Store
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# === Logs & temp ===
+log/
+*.log
+
+# === Test artifacts ===
+air10_test.txt
+air10_empty.txt
+
+# === Test runner output ===
+*.out
+*.err
+*.tmp
+
+# === ENV ===
+.env
+.env.*
+
+# === Misc ===
