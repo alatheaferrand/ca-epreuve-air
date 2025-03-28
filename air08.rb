@@ -1,91 +1,124 @@
 # frozen_string_literal: true
 
-# Mélanger deux tableaux triés
-# Programme qui fusionne deux listes d'entiers triées en les gardant triées,
-# les deux listes seront séparées par un "fusion".
-# Utiliser une fonction du genre:
-#  sorted_fusion(array1, array2) {
-#    your algo
-#    return (new_array)
-#  }
-# Afficher error et quitter le programme en cas de problèmes d'arguments.
+# Fusion — AIR08
+# Merges two sorted arrays of integers into one sorted array.
+# Example: ruby air08.rb 1 2 3 fusion 4 5 6 → 1 2 3 4 5 6
 
-# ---------- Utility Functions ----------
-
-def sorted_fusion(first_array, second_array)
-  array_fusion = first_array + second_array
-  sorted = false
-
-  until sorted
-    sorted = true
-    (array_fusion.length - 1).times do |i|
-      next unless array_fusion[i] > array_fusion[i + 1]
-
-      array_fusion[i], array_fusion[i + 1] = array_fusion[i + 1], array_fusion[i]
-      sorted = false
-    end
-  end
-
-  array_fusion.join(' ')
-end
-
-# ---------- Error Handling ----------
+# Validation
 
 def validate_arguments(arguments)
-  return 'error: empty input detected' if arguments.any? { |argument| empty_input?(argument) }
-  return 'error: at least 3 arguments expected' unless at_least_three_argument?(arguments)
-  return 'error: "fusion" token expected between the two arrays' unless token_match?(arguments)
-  return 'error: "fusion" must not be at the beginning or end' if fusion_misplaced?(arguments)
-  return 'error: all arguments must be numeric except "fusion"' unless arguments.all? do |argument|
-    numeric?(argument) || argument == 'fusion'
-  end
-end
+  return 'error: at least 5 arguments expected' if arguments.length < 5
+  return 'error: empty input detected' if contains_empty_input?(arguments)
+  return 'error: fusion token expected' unless arguments.include?('fusion')
+  return 'error: "fusion" at start/end' if fusion_misplaced?(arguments)
+  return 'error: non-numeric value detected' unless all_numeric_except_fusion?(arguments)
 
-def at_least_three_argument?(arguments)
-  arguments.size >= 3
-end
-
-def token_match?(arguments)
-  arguments.each { |argument| return true if argument == 'fusion' }
-  false
+  nil
 end
 
 def fusion_misplaced?(arguments)
   arguments.first == 'fusion' || arguments.last == 'fusion'
 end
 
-def numeric?(number)
-  !Integer(number, exception: false).nil?
+def all_numeric_except_fusion?(arguments)
+  arguments.reject { |argument| argument == 'fusion' }.all? do |argument|
+    numeric_string?(argument)
+  end
 end
+
+# Business logic
+
+def merged_sorted_arrays(array1, array2)
+  result = []
+  i = 0
+  j = 0
+
+  while i < array1.length && j < array2.length
+    result << (array1[i] <= array2[j] ? array1[i] : array2[j])
+    array1[i] <= array2[j] ? i += 1 : j += 1
+  end
+
+  append_remaining(result, array1, i)
+  append_remaining(result, array2, j)
+
+  result
+end
+
+def append_remaining(result, array, index)
+  while index < array.length
+    result << array[index]
+    index += 1
+  end
+end
+
+# Helpers
 
 def empty_input?(string)
   i = 0
   while i < string.length
-    return false if string[i] != " "
+    return false if string[i] != ' '
+
     i += 1
   end
   true
 end
 
-# ---------- Parsing Arguments ----------
+def contains_empty_input?(array)
+  i = 0
+  while i < array.length
+    return true if empty_input?(array[i])
 
-def retrieve_arguments()
+    i += 1
+  end
+  false
+end
+
+def numeric_string?(string)
+  return false if string.empty?
+
+  i = 0
+  i += 1 if ['+', '-'].include?(string[0])
+  return false if i >= string.length
+
+  while i < string.length
+    char = string[i]
+    return false if char < '0' || char > '9'
+
+    i += 1
+  end
+
+  true
+end
+
+def sorted?(numbers)
+  i = 1
+  while i < numbers.length
+    return false if numbers[i] < numbers[i - 1]
+
+    i += 1
+  end
+  true
+end
+
+# Program execution
+
+def main
   arguments = ARGV
+
+  error = validate_arguments(arguments)
+  return puts error if error
+
+  index = arguments.index('fusion')
+
+  raw_array1 = arguments[0...index]
+  raw_array2 = arguments[(index + 1)..]
+
+  array1 = raw_array1.map(&:to_i)
+  array2 = raw_array2.map(&:to_i)
+
+  return puts 'error: arrays must be sorted' unless sorted?(array1) && sorted?(array2)
+
+  puts merged_sorted_arrays(array1, array2).join(' ')
 end
 
-# ---------- Problem Solving ----------
-
-def new_array_sorted_fusion()
-  arguments = retrieve_arguments()
-  error_message = validate_arguments(arguments)
-  return error_message if error_message
-
-  first_array = arguments[0...arguments.index('fusion')]
-  second_array = arguments[arguments.index('fusion') + 1..]
-
-  return sorted_fusion(first_array, second_array)
-end
-
-# ---------- Execution ----------
-
-puts new_array_sorted_fusion()
+main if __FILE__ == $PROGRAM_NAME
