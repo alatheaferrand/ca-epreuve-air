@@ -1,55 +1,67 @@
 # frozen_string_literal: true
 
-# Rotation vers la gauche
-# Programme qui décale tous les éléments d'un tableau vers la gauche.
-# Le premier élément devient le dernier à chaque rotation.
-# Utiliser une fonction du genre:
-#  ma_rotation(array) {
-#    your algo
-#    return (new_array)
-#  }
-# Afficher error et quitter le programme en cas de problèmes d'arguments.
+# Rotation — AIR09
+# Shifts all elements of an array to the left (first becomes last).
+# Example: ruby air09.rb one two three → two three one
 
-# ---------- Utility Functions ----------
-
-def left_rotation(array)
-  new_array = []
-  new_array << array[1..] << array[0]
-
-  new_array.join(', ')
-end
-
-# ---------- Error Handling ----------
+# Validation
 
 def validate_arguments(arguments)
-  return 'error: at least 2 arguments expected' unless at_least_two_argument?(arguments)
-  return 'error: empty input detected' if arguments.any? { |argument| empty_input?(argument) }
+  return 'error: at least 2 arguments expected' if arguments.length < 2
+  return 'error: empty input detected' if contains_empty_input?(arguments)
+
+  nil
 end
 
-def at_least_two_argument?(arguments)
-  arguments.size >= 2
+# Business logic
+
+def rotate_left(array)
+  rotated = []
+  i = 1
+  while i < array.length
+    rotated << array[i]
+    i += 1
+  end
+
+  rotated << array[0]
+  rotated
 end
 
-def empty_input?(argument)
-  argument.strip.empty?
+# Helpers
+
+def empty_input?(string)
+  i = 0
+  while i < string.length
+    return false if string[i] != ' '
+
+    i += 1
+  end
+  true
 end
 
-# ---------- Parsing Arguments ----------
+def contains_empty_input?(array)
+  i = 0
+  while i < array.length
+    return true if empty_input?(array[i])
 
-def retrieve_arguments()
+    i += 1
+  end
+
+  false
+end
+
+# Program execution
+
+def main
   arguments = ARGV
+
+  error = validate_arguments(arguments)
+  return puts error if error
+
+  result = rotate_left(arguments)
+  return puts 'error: empty input detected' if contains_empty_input?(result)
+
+  puts result.join(', ')
 end
 
-# ---------- Problem Solving ----------
-
-def rotate_arguments()
-  arguments = retrieve_arguments()
-  error_message = validate_arguments(arguments)
-  return error_message if error_message
-
-  return left_rotation(arguments)
-end
-
-# ---------- Execution ----------
-
-puts rotate_arguments()
+main if __FILE__ == $PROGRAM_NAME
