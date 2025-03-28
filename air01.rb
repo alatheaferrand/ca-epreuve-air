@@ -1,73 +1,94 @@
 # frozen_string_literal: true
 
-# Split en fonction
-# Programme qui découpe une chaine de caractères en tableau en fonction du séparateur donné en 2e argument.
-# Le programme devra utiliser une fonction prototypée comme ceci :
-# ma_fonction(string_à_couper, string_séparateur) {
-#  votre algorithme
-#  return (tableau)
-# }
-# Affiche error et quitte le programme en cas de problèmes d'arguments.
+# Split — AIR01
+# Receives a string and a separator, and returns an array split on that separator.
+# Example usage: ruby air01.rb "hello>world>!" ">"
 
-# ---------- Utility Functions ----------
-
-def custom_split(source_string, split_token)
-  split_parts = []
-  current_chunk = +''
-
-  i = 0
-  while i < source_string.length
-
-    if source_string[i, split_token.length] == split_token
-      split_parts << current_chunk unless current_chunk.empty?
-      current_chunk = +''
-      i += split_token.length
-      next
-    end
-
-    current_chunk << source_string[i]
-    i += 1
-  end
-
-  split_parts << current_chunk unless current_chunk.empty?
-
-  split_parts
-end
-
-# ---------- Error Handling ----------
+# Validation
 
 def validate_arguments(arguments)
-  return 'error: two strings expected' unless two_arguments?(arguments)
-  return 'error: empty input detected' if arguments.any? { |argument| empty_input?(argument) }
+  return 'error: two strings expected' unless arguments.length == 2
+  return 'error: empty input detected' if contains_empty_input?(arguments)
+
+  nil
 end
 
-def two_arguments?(arguments)
-  arguments.size == 2
+# Business logic
+
+# rubocop:disable Metrics/MethodLength
+def split(string, separator)
+  segments = []
+  current = ''
+  i = 0
+
+  while i <= string.length - separator.length
+    if match_separator?(string, separator, i)
+      segments << current
+      current = ''
+      i += separator.length
+    else
+      current += string[i]
+      i += 1
+    end
+  end
+
+  current += string[i..] if i < string.length
+  segments << current
+
+  segments
+end
+# rubocop:enable Metrics/MethodLength
+
+def match_separator?(string, separator, index)
+  string[index, separator.length] == separator
 end
 
-def empty_input?(argument)
-  argument.strip.empty?
+# Helpers
+
+def includes?(char, array)
+  i = 0
+  while i < array.length
+    return true if char == array[i]
+
+    i += 1
+  end
+  false
 end
 
-# ---------- Parsing Arguments ----------
+def contains_empty_input?(array)
+  i = 0
+  while i < array.length
+    return true if empty_input?(array[i])
 
-def retrieve_arguments()
+    i += 1
+  end
+  false
+end
+
+def empty_input?(string)
+  i = 0
+  while i < string.length
+    return false if string[i] != ' '
+
+    i += 1
+  end
+  true
+end
+
+# Program execution
+
+def main
   arguments = ARGV
+  error = validate_arguments(arguments)
+  return puts error if error
+
+  string = arguments[0]
+  separator = arguments[1]
+
+  strings = split(string, separator)
+  return puts string if strings.length == 1
+
+  puts strings
 end
 
-# ---------- Problem Solving ----------
-
-def split_string()
-  arguments = retrieve_arguments()
-  error_message = validate_arguments(arguments)
-  return error_message if error_message
-
-  source_string = arguments[0]
-  split_token = arguments[1]
-
-  return custom_split(source_string, split_token)
-end
-
-# ---------- Execution ----------
-
-puts split_string()
+main if __FILE__ == $PROGRAM_NAME
