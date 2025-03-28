@@ -1,70 +1,66 @@
 # frozen_string_literal: true
 
-# Concat
-# Programme qui transforme un tableau de chaînes de caractères
-# en une seule chaîne de caractères. Espacés d'un séparateur donné en dernier argument.
-# ma_fonction(array_de_string, séparateur) {
-#  votre algorithme
-#  return (string)
-# }
-# Affiche error et quitte le programme en cas de problèmes d'arguments.
+# Concat — AIR02
+# Receives a list of strings and a separator, and returns the joined result.
+# Example usage: ruby air02.rb Hello World ", "
 
-# ---------- Utility Functions ----------
+# Validation
 
-def custom_concat(source_strings, concat_token)
-  concat_string = +''
+def validate_arguments(arguments)
+  return 'error: at least three arguments expected' if arguments.length < 3
 
+  strings = arguments[0...-1]
+  return 'error: empty input detected' if contains_empty_input?(strings)
+
+  nil
+end
+
+# Business logic
+
+def concat(strings, separator)
+  result = ''
   i = 0
-  while i < source_strings.length
-    concat_string << source_strings[i]
+  while i < strings.length
+    result += strings[i]
+    result += separator if i < strings.length - 1
+    i += 1
+  end
+  result
+end
 
-    concat_string << concat_token if i < source_strings.length - 1
+# Helpers
+
+def contains_empty_input?(array)
+  i = 0
+  while i < array.length
+    return true if empty_input?(array[i])
 
     i += 1
   end
-
-  concat_string
-end
-
-# ---------- Error Handling ----------
-
-def validate_arguments(arguments)
-  return 'error: at least two arguments expected' unless at_least_two_argument?(arguments)
-  return 'error: empty input detected' if arguments.any? { |argument| empty_input?(argument) }
-end
-
-def at_least_two_argument?(arguments)
-  arguments.size >= 2
+  false
 end
 
 def empty_input?(string)
   i = 0
   while i < string.length
-    return false if string[i] != ""
+    return false if string[i] != ' '
+
     i += 1
   end
   true
 end
 
-# ---------- Parsing Arguments ----------
+# Main
 
-def retrieve_arguments()
+def main
   arguments = ARGV
+  error = validate_arguments(arguments)
+  return puts error if error
+
+  strings = arguments[0..-2]
+  separator = arguments[-1]
+
+  puts concat(strings, separator)
 end
 
-# ---------- Problem Solving ----------
-
-def concat_string()
-  arguments = retrieve_arguments()
-  error_message = validate_arguments(arguments)
-  return error_message if error_message
-
-  source_strings = arguments[0..-2]
-  concat_token = arguments[-1]
-
-  custom_concat(source_strings, concat_token)
-end
-
-# ---------- Execution ----------
-
-puts concat_string()
+main if __FILE__ == $PROGRAM_NAME
